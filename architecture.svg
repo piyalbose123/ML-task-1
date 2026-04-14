@@ -1,0 +1,113 @@
+<svg viewBox="0 0 900 620" xmlns="http://www.w3.org/2000/svg" font-family="'Courier New', monospace">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#4ade80"/>
+    </marker>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="620" fill="#0f172a"/>
+  <rect width="900" height="620" fill="url(#bg)" opacity="0.3"/>
+
+  <!-- Title -->
+  <text x="450" y="38" text-anchor="middle" fill="#4ade80" font-size="18" font-weight="bold" filter="url(#glow)">RAG Question Answering — Architecture</text>
+
+  <!-- USER -->
+  <rect x="30" y="60" width="110" height="50" rx="8" fill="#1e293b" stroke="#4ade80" stroke-width="1.5"/>
+  <text x="85" y="80" text-anchor="middle" fill="#4ade80" font-size="11" font-weight="bold">CLIENT</text>
+  <text x="85" y="98" text-anchor="middle" fill="#94a3b8" font-size="10">curl / HTTP</text>
+
+  <!-- Arrow: User → FastAPI -->
+  <line x1="140" y1="85" x2="190" y2="85" stroke="#4ade80" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- FastAPI Box -->
+  <rect x="195" y="55" width="160" height="62" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="1.5"/>
+  <text x="275" y="75" text-anchor="middle" fill="#38bdf8" font-size="11" font-weight="bold">FastAPI</text>
+  <text x="275" y="91" text-anchor="middle" fill="#94a3b8" font-size="9">Rate Limit Middleware</text>
+  <text x="275" y="107" text-anchor="middle" fill="#94a3b8" font-size="9">Pydantic Validation</text>
+
+  <!-- Arrow: FastAPI → Upload Router -->
+  <line x1="275" y1="117" x2="185" y2="195" stroke="#4ade80" stroke-width="1.2" marker-end="url(#arrow)" stroke-dasharray="5,3"/>
+  <line x1="275" y1="117" x2="480" y2="195" stroke="#4ade80" stroke-width="1.2" marker-end="url(#arrow)" stroke-dasharray="5,3"/>
+
+  <!-- Labels on arrows -->
+  <text x="195" y="165" fill="#fbbf24" font-size="9">POST /upload</text>
+  <text x="360" y="165" fill="#fbbf24" font-size="9">POST /query</text>
+
+  <!-- UPLOAD PIPELINE (left) -->
+  <rect x="30" y="200" width="300" height="280" rx="10" fill="#0f172a" stroke="#64748b" stroke-width="1" stroke-dasharray="6,3"/>
+  <text x="180" y="220" text-anchor="middle" fill="#64748b" font-size="10">INGESTION PIPELINE (Background Job)</text>
+
+  <!-- Step boxes inside -->
+  <rect x="50" y="230" width="260" height="40" rx="6" fill="#1e293b" stroke="#f472b6" stroke-width="1.2"/>
+  <text x="180" y="248" text-anchor="middle" fill="#f472b6" font-size="10" font-weight="bold">① DocumentProcessor</text>
+  <text x="180" y="263" text-anchor="middle" fill="#94a3b8" font-size="9">extract_text (PDF/TXT) → chunk (512 chars, 20% overlap)</text>
+
+  <line x1="180" y1="270" x2="180" y2="285" stroke="#4ade80" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <rect x="50" y="288" width="260" height="40" rx="6" fill="#1e293b" stroke="#a78bfa" stroke-width="1.2"/>
+  <text x="180" y="306" text-anchor="middle" fill="#a78bfa" font-size="10" font-weight="bold">② EmbeddingService</text>
+  <text x="180" y="320" text-anchor="middle" fill="#94a3b8" font-size="9">all-MiniLM-L6-v2 → 384-dim vectors (L2-normalized)</text>
+
+  <line x1="180" y1="328" x2="180" y2="343" stroke="#4ade80" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <rect x="50" y="345" width="260" height="40" rx="6" fill="#1e293b" stroke="#34d399" stroke-width="1.2"/>
+  <text x="180" y="363" text-anchor="middle" fill="#34d399" font-size="10" font-weight="bold">③ VectorStoreService (FAISS)</text>
+  <text x="180" y="378" text-anchor="middle" fill="#94a3b8" font-size="9">IndexFlatIP → add embeddings + save metadata</text>
+
+  <line x1="180" y1="385" x2="180" y2="400" stroke="#4ade80" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <rect x="50" y="402" width="260" height="40" rx="6" fill="#1e293b" stroke="#fb923c" stroke-width="1.2"/>
+  <text x="180" y="420" text-anchor="middle" fill="#fb923c" font-size="10" font-weight="bold">④ MetricsCollector</text>
+  <text x="180" y="435" text-anchor="middle" fill="#94a3b8" font-size="9">record ingestion latency + chunk count</text>
+
+  <!-- QUERY PIPELINE (right) -->
+  <rect x="430" y="200" width="430" height="340" rx="10" fill="#0f172a" stroke="#64748b" stroke-width="1" stroke-dasharray="6,3"/>
+  <text x="645" y="220" text-anchor="middle" fill="#64748b" font-size="10">QUERY PIPELINE</text>
+
+  <rect x="450" y="230" width="390" height="40" rx="6" fill="#1e293b" stroke="#a78bfa" stroke-width="1.2"/>
+  <text x="645" y="248" text-anchor="middle" fill="#a78bfa" font-size="10" font-weight="bold">① EmbeddingService</text>
+  <text x="645" y="263" text-anchor="middle" fill="#94a3b8" font-size="9">embed_query → 384-dim vector</text>
+
+  <line x1="645" y1="270" x2="645" y2="285" stroke="#4ade80" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <rect x="450" y="288" width="390" height="50" rx="6" fill="#1e293b" stroke="#34d399" stroke-width="1.2"/>
+  <text x="645" y="306" text-anchor="middle" fill="#34d399" font-size="10" font-weight="bold">② VectorStoreService — Similarity Search</text>
+  <text x="645" y="320" text-anchor="middle" fill="#94a3b8" font-size="9">FAISS IndexFlatIP.search(top_k, threshold)</text>
+  <text x="645" y="333" text-anchor="middle" fill="#94a3b8" font-size="9">Returns: [(ChunkRecord, score), ...]</text>
+
+  <line x1="645" y1="338" x2="645" y2="353" stroke="#4ade80" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <rect x="450" y="355" width="390" height="50" rx="6" fill="#1e293b" stroke="#38bdf8" stroke-width="1.2"/>
+  <text x="645" y="373" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="bold">③ GenerationService (Anthropic Claude Haiku)</text>
+  <text x="645" y="388" text-anchor="middle" fill="#94a3b8" font-size="9">Prompt: context chunks + query → LLM answer</text>
+  <text x="645" y="401" text-anchor="middle" fill="#94a3b8" font-size="9">Fallback: extractive if no API key</text>
+
+  <line x1="645" y1="405" x2="645" y2="420" stroke="#4ade80" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <rect x="450" y="422" width="390" height="40" rx="6" fill="#1e293b" stroke="#fb923c" stroke-width="1.2"/>
+  <text x="645" y="440" text-anchor="middle" fill="#fb923c" font-size="10" font-weight="bold">④ MetricsCollector</text>
+  <text x="645" y="455" text-anchor="middle" fill="#94a3b8" font-size="9">record latency_ms + top similarity score</text>
+
+  <line x1="645" y1="462" x2="645" y2="477" stroke="#4ade80" stroke-width="1.2" marker-end="url(#arrow)"/>
+
+  <rect x="450" y="478" width="390" height="40" rx="6" fill="#1e293b" stroke="#fbbf24" stroke-width="1.2"/>
+  <text x="645" y="496" text-anchor="middle" fill="#fbbf24" font-size="10" font-weight="bold">QueryResponse</text>
+  <text x="645" y="511" text-anchor="middle" fill="#94a3b8" font-size="9">answer + retrieved_chunks + latency_ms + scores</text>
+
+  <!-- Persistence box -->
+  <rect x="50" y="500" width="260" height="60" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="1.5"/>
+  <text x="180" y="520" text-anchor="middle" fill="#fbbf24" font-size="10" font-weight="bold">💾 Disk Persistence</text>
+  <text x="180" y="535" text-anchor="middle" fill="#94a3b8" font-size="9">data/vector_store/index.faiss</text>
+  <text x="180" y="548" text-anchor="middle" fill="#94a3b8" font-size="9">data/vector_store/metadata.json  |  data/metrics.json</text>
+
+  <!-- Legend -->
+  <text x="450" y="580" fill="#64748b" font-size="9">● green = data flow   ● dashed = routing   ● colored borders = service type</text>
+
+  <!-- Status label -->
+  <text x="180" y="595" text-anchor="middle" fill="#4ade80" font-size="9" opacity="0.7">Status updates: register → processing → completed/failed</text>
+</svg>
